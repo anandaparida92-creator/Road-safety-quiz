@@ -1,48 +1,205 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Can You Pass This Road Safety Test? | Technozion</title><style>:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#eaf2ff;background:#071426}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#193b61,#071426 68%);min-height:100vh}header{text-align:center;padding:28px 16px 8px}.eyebrow{color:#6fe9cf;letter-spacing:.14em;font-weight:800;font-size:12px}h1{font-size:clamp(27px,6vw,43px);margin:9px 0}header p{color:#c2d2e6;margin:6px auto;max-width:550px}.shell{max-width:750px;margin:20px auto;padding:0 16px 40px}.panel{background:#10263d;border:1px solid #32506b;border-radius:22px;padding:clamp(19px,4vw,36px);box-shadow:0 18px 50px #0005}.meta{display:flex;justify-content:space-between;color:#a9c1d7;font-size:13px;gap:12px}.bar{height:9px;background:#29445f;border-radius:20px;margin:16px 0 25px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#30c4ab,#8ff0db);transition:width .2s}h2{font-size:clamp(20px,4vw,27px);line-height:1.35}button{font:inherit;cursor:pointer}.opt{display:block;width:100%;border:1px solid #385876;background:#19334e;color:#f3f8ff;text-align:left;padding:16px;margin:11px 0;border-radius:13px;transition:.12s}.opt:hover{border-color:#63d7c4}.opt.selected{border:2px solid #6fe9cf;background:#184f59}.actions{display:flex;gap:10px;justify-content:space-between;margin-top:23px}.primary,.secondary{border:0;border-radius:12px;padding:13px 24px;font-weight:750}.primary{background:#62ead0;color:#052b31}.secondary{background:#29445f;color:#fff}.primary:disabled{opacity:.4;cursor:not-allowed}.hide{display:none}.center{text-align:center}.score{font-size:66px;font-weight:900;color:#6fe9cf}.review{padding:15px;margin:12px 0;background:#183650;border-radius:11px}.correct{color:#7be5c9}.wrong{color:#ffb3a8}small{color:#a9bfd2}footer{text-align:center;color:#89a7bf;padding:10px 18px 32px;font-size:12px} .signbox{display:flex;justify-content:center;align-items:center;min-height:165px;margin:8px 0 16px;background:#edf3f8;border-radius:16px;padding:15px}.signbox svg{height:142px;width:142px;max-width:100%}.hint{font-size:13px;color:#b9d2e3;margin:8px 0}.secondary:disabled{opacity:.35;cursor:not-allowed}</style></head><body>
-<header><div class="eyebrow">TECHNOZION • NIT WARANGAL</div><h1>CAN YOU PASS THIS ROAD SAFETY TEST?</h1><p>10 random questions • Indian traffic rules • Road sign challenge</p></header>
-<main class="shell"><section class="panel" id="start"><h2>Think you're road ready?</h2><p>Every attempt has a fresh order of questions and shuffled answers. Identify the road signs, follow traffic rules and learn about heavy vehicle blind spots.</p><p>🚦 Traffic rules &nbsp; 🛑 Road signs &nbsp; 🚚 Blind spots</p><button class="primary" onclick="startQuiz()">Start Challenge →</button></section>
-<section class="panel hide" id="quiz"><div class="meta"><span id="counter"></span><span>One correct answer</span></div><div class="bar"><div class="fill" id="fill"></div></div><h2 id="question"></h2><div id="sign"></div><div id="options"></div><div class="actions"><button class="secondary" onclick="prev()" id="back">← Back</button><button class="primary" onclick="next()" id="next" disabled>Next →</button></div></section>
-<section class="panel hide" id="result"><div class="center"><h2>Your Road Safety Score</h2><div class="score" id="score"></div><p id="message"></p><button class="primary" onclick="startQuiz()">Try New Random Quiz ↻</button></div><h2>Answer Review</h2><div id="review"></div></section></main><footer>Road Safety Awareness Stall • Technozion • Educational challenge, not an official driving licence test</footer>
-<script>
-// Vector sign illustrations are embedded; no internet needed for signs.
-const shapes={
-stop:`<polygon points="50,4 77,15 96,42 96,58 77,85 50,96 23,85 4,58 4,42 23,15" fill="#d82131" stroke="white" stroke-width="4"/><text x="50" y="59" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-weight="900" font-size="24">STOP</text>`,
-noentry:`<circle cx="50" cy="50" r="44" fill="#df2434"/><rect x="17" y="43" width="66" height="14" rx="3" fill="white"/>`,
-limit:`<circle cx="50" cy="50" r="43" fill="white" stroke="#df2434" stroke-width="10"/><text x="50" y="62" text-anchor="middle" font-family="Arial" font-weight="900" font-size="36">40</text>`,
-parking:`<circle cx="50" cy="50" r="44" fill="white" stroke="#df2434" stroke-width="9"/><text x="50" y="65" text-anchor="middle" font-family="Arial" font-weight="900" font-size="51">P</text><line x1="19" y1="81" x2="81" y2="19" stroke="#df2434" stroke-width="9"/>`,
-giveway:`<polygon points="50,91 6,12 94,12" fill="white" stroke="#d82131" stroke-width="10" stroke-linejoin="round"/>`,
-turn:`<circle cx="50" cy="50" r="44" fill="white" stroke="#df2434" stroke-width="9"/><path d="M73 76 V49 Q73 34 57 34 H34 M34 34 l13 -13 M34 34 l13 13" fill="none" stroke="#161d29" stroke-width="8" stroke-linejoin="round"/><line x1="17" y1="83" x2="83" y2="17" stroke="#df2434" stroke-width="9"/>`,
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NITW Road Safety Quiz</title>
+<style>
+:root {
+  --navy:#123b74; --blue:#1e63b5; --light:#eef6ff; --yellow:#ffd84d; --red:#e84545; --green:#159947; --text:#132034; --card:#ffffffee;
 }
-const svg=s=>s?`<div class="signbox"><svg role="img" aria-label="Traffic sign illustration" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${shapes[s]}</svg></div>`:'';
-// 'a' is the correct option's original index; option order is shuffled at runtime.
-const bank=[
-{kind:'sign',sign:'stop',q:'What does this traffic sign require you to do?',o:['Come to a complete stop','Slow down without stopping','Give priority only to pedestrians','Stop only if a vehicle is approaching'],a:0,e:'STOP means stop completely, check for traffic and proceed only when safe.'},
-{kind:'sign',sign:'noentry',q:'What does this road sign mean?',o:['No entry for vehicles','No parking','One-way road begins','Give way to oncoming traffic'],a:0,e:'No Entry prohibits vehicular entry in that direction.'},
-{kind:'sign',sign:'limit',q:'What is the meaning of this circular sign?',o:['Maximum permitted speed is 40 km/h','Minimum speed is 40 km/h','A 40 km road begins','Speed limit ends after 40 metres'],a:0,e:'A red-bordered 40 sign sets a maximum speed of 40 km/h.'},
-{kind:'sign',sign:'parking',q:'What does this red-slash P sign mean?',o:['No parking','Parking available','Parking reserved for cars','Stopping is always prohibited'],a:0,e:'A slashed P means no parking. No stopping uses a different sign.'},
-{kind:'sign',sign:'giveway',q:'What should you do at this inverted triangular sign?',o:['Give way to traffic with priority','Stop for exactly 10 seconds','Accelerate through the junction','Only allow heavy vehicles through'],a:0,e:'Give Way requires you to yield to traffic with priority and stop if necessary.'},
-{kind:'sign',sign:'turn',q:'What manoeuvre does this sign prohibit?',o:['Turning left','Turning right','Driving straight','Parking near the intersection'],a:0,e:'The diagonal red slash over the left-turn arrow means Left Turn Prohibited.'},
-{kind:'rule',q:'At a zebra crossing, pedestrians are already crossing. What should a driver do?',o:['Stop and allow them to cross','Sound the horn and proceed','Overtake the waiting vehicles','Accelerate before pedestrians reach the lane'],a:0,e:'Give pedestrians crossing the road priority.'},
-{kind:'rule',q:'At a red traffic light, the correct action is to:',o:['Stop before the stop line','Proceed when there are no police nearby','Turn without checking for restrictions','Cross the stop line to improve visibility'],a:0,e:'A red traffic signal requires traffic to stop at the designated line.'},
-{kind:'rule',q:'What should you do when the signal changes to amber as you approach?',o:['Stop if it is safe to do so','Accelerate to clear the junction','Ignore the signal if the road is empty','Sound the horn and cross'],a:0,e:'Amber warns that the signal is changing; do not speed up to beat the light.'},
-{kind:'rule',q:'Which is the safe and lawful helmet practice on a motorcycle?',o:['Both rider and pillion wear properly fastened helmets','Only the rider wears a helmet on highways','Carry helmets on the handlebar','Wear a loose helmet for short trips'],a:0,e:'Riders and pillion riders should use properly fastened protective helmets in accordance with applicable rules.'},
-{kind:'rule',q:'You receive an urgent message while driving. What is best?',o:['Pull over safely before using the phone','Read it at the next traffic light while moving','Hold the phone low near the steering wheel','Ask another driver to slow down for you'],a:0,e:'Avoid handling a phone while driving. Stop somewhere safe before checking it.'},
-{kind:'rule',q:'An ambulance is approaching with emergency siren and lights. What should you do?',o:['Make way safely without sudden dangerous moves','Accelerate to stay ahead of it','Brake abruptly in the middle of the lane','Block the shoulder to stop overtaking'],a:0,e:'Give way to emergency vehicles safely and predictably.'},
-{kind:'rule',q:'Before changing lanes, what is the safest sequence?',o:['Check mirrors and blind spots, signal, and move when clear','Signal and move without checking','Use the horn instead of indicators','Move first, then check mirrors'],a:0,e:'Observe around the vehicle, signal your intention, and move only when the gap is safe.'},
-{kind:'rule',q:'What does a continuous solid centre line generally tell drivers?',o:['Do not cross it to overtake','Overtake freely from either side','The road is one-way','A parking bay is nearby'],a:0,e:'Solid centre lines restrict crossing for overtaking; follow the road marking.'},
-{kind:'rule',q:'At an uncontrolled junction, your view is blocked by parked vehicles. What should you do?',o:['Slow down and proceed only when you can see it is safe','Maintain speed because you have priority','Rely only on the horn','Follow the next vehicle closely'],a:0,e:'Restricted sight distance calls for a cautious approach and readiness to stop.'},
-{kind:'blind',q:'A truck is turning left. Where should a scooter rider avoid riding?',o:['In the narrow gap along the truck’s left side','Well behind the truck at a safe distance','In a separate safe lane away from the truck','At a secure waiting position before the turn'],a:0,e:'Large vehicles can swing wide; the space beside them can be dangerous.'},
-{kind:'blind',q:'If you cannot see the truck driver in the mirror, you should assume:',o:['You may be in a blind spot','The driver has already seen you','The truck is parked','It is safe to overtake immediately'],a:0,e:'You may not be visible to the driver. Keep clear of blind-spot areas.'},
-{kind:'blind',q:'Why should a car not cut closely in front of a heavy truck?',o:['Heavy trucks can need much longer to stop','Trucks are not allowed to brake','Trucks have no front-facing mirrors','Cars must always travel slower than trucks'],a:0,e:'Heavy vehicles need adequate stopping distance and space ahead.'},
-{kind:'rule',q:'When may you overtake another vehicle?',o:['When permitted and the road ahead is clearly safe','Immediately before a blind curve','Across a solid centre line','While approaching a zebra crossing'],a:0,e:'Overtake only where permitted and when the full manoeuvre can be completed safely.'},
-{kind:'rule',q:'While driving at night, an oncoming driver is dazzled by your high beam. What should you do?',o:['Dip your headlights to low beam','Flash high beam continuously','Switch off all lights','Move towards the centre line'],a:0,e:'Dip headlights for oncoming traffic to reduce glare.'}
-];
-const shuffle=a=>{for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a};
-const el=id=>document.getElementById(id);let questions=[],answers=[],i=0;
-function show(s){['start','quiz','result'].forEach(x=>el(x).classList.toggle('hide',x!==s))}
-function startQuiz(){const signs=shuffle(bank.filter(x=>x.kind==='sign')).slice(0,4);const rest=shuffle(bank.filter(x=>x.kind!=='sign')).slice(0,6);questions=shuffle([...signs,...rest]).map(d=>{const opts=shuffle(d.o.map((text,j)=>({text,correct:j===d.a})));return {...d,opts,a:opts.findIndex(x=>x.correct)}});answers=Array(10).fill(null);i=0;show('quiz');render()}
-function render(){const d=questions[i];el('counter').textContent=`Question ${i+1} of 10`;el('fill').style.width=`${(i+1)*10}%`;el('question').textContent=d.q;el('sign').innerHTML=svg(d.sign);el('options').innerHTML='';d.opts.forEach((v,j)=>{const b=document.createElement('button');b.className='opt'+(answers[i]===j?' selected':'');b.textContent=String.fromCharCode(65+j)+'. '+v.text;b.onclick=()=>{answers[i]=j;render()};el('options').appendChild(b)});el('back').disabled=i===0;el('next').disabled=answers[i]===null;el('next').textContent=i===9?'Finish Quiz ✓':'Next →'}
-function prev(){if(i>0){i--;render()}}function next(){if(answers[i]===null)return;if(i<9){i++;render()}else finish()}
-function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function finish(){show('result');const points=questions.filter((d,j)=>d.a===answers[j]).length;el('score').textContent=`${points}/10`;el('message').textContent=points===10?'Outstanding! Road Safety Champion!':points>=7?'Great job! Keep practicing safe road habits.':'Good try! Review the answers, then try a fresh challenge.';el('review').innerHTML=questions.map((d,j)=>`<div class="review"><b>${j+1}. ${escapeHTML(d.q)}</b>${d.sign?svg(d.sign):''}<p class="${answers[j]===d.a?'correct':'wrong'}">${answers[j]===d.a?'✓ Correct':'✗ Your answer: '+escapeHTML(d.opts[answers[j]].text)}</p><div><b>Correct:</b> ${escapeHTML(d.opts[d.a].text)}</div><small>${escapeHTML(d.e)}</small></div>`).join('')}
-</script></body></html>
+*{box-sizing:border-box}
+body{margin:0; font-family:Arial,Helvetica,sans-serif; color:var(--text); background:linear-gradient(180deg,#d9ecff 0%,#f6fbff 45%,#eef6ff 100%); min-height:100vh;}
+body::before{content:""; position:fixed; inset:0; pointer-events:none; opacity:.14; background-image: radial-gradient(circle at 15% 20%, #7ab7ff 0, transparent 25%), radial-gradient(circle at 85% 15%, #b6d8ff 0, transparent 20%), linear-gradient(135deg, transparent 0 47%, rgba(30,99,181,.08) 48% 52%, transparent 53%), linear-gradient(0deg, rgba(18,59,116,.06), rgba(18,59,116,.06));}
+.container{max-width:1000px; margin:0 auto; padding:20px; position:relative; z-index:1;}
+.hero{text-align:center; padding:20px 16px 10px;}
+.hero img{width:86px; height:86px; object-fit:contain; background:white; border-radius:16px; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.12);}
+.hero h1{margin:14px 0 6px; font-size:clamp(1.9rem,4vw,3rem); color:var(--navy);}
+.hero p{margin:0 auto; max-width:760px; line-height:1.55; color:#25496f;}
+.badge{display:inline-block; margin-top:10px; padding:8px 14px; background:var(--yellow); color:#111; font-weight:700; border-radius:999px;}
+.card{background:var(--card); backdrop-filter:blur(8px); border:1px solid #d8e6f7; border-radius:20px; box-shadow:0 12px 30px rgba(20,58,110,.12); padding:22px; margin:20px 0;}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;}
+.field label{display:block; font-weight:700; margin-bottom:6px;}
+.field input,.field select{width:100%; padding:12px 14px; border-radius:12px; border:1px solid #b7cde8; font-size:1rem; background:#fff;}
+.checkbox-group{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-top:8px;}
+.checkbox-group label{display:flex; align-items:center; gap:8px; font-weight:500; padding:10px; border:1px solid #cfe0f6; border-radius:12px; background:white;}
+.actions{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:18px;}
+button{border:none; cursor:pointer; border-radius:14px; padding:14px 22px; font-weight:800; font-size:1rem;}
+.primary{background:var(--blue); color:white;}
+.secondary{background:#e8f1fc; color:var(--navy);}
+.danger{background:var(--red); color:white;}
+.small{font-size:.92rem; padding:11px 16px;}
+.quiz-header{display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:8px;}
+.progress{font-weight:700; color:var(--navy);}
+.question-card{padding:20px; border:1px solid #d9e7f7; border-radius:18px; background:white; margin:16px 0;}
+.question-card h3{margin:0 0 14px; font-size:1.13rem; line-height:1.45;}
+.sign-visual{display:flex;justify-content:center;align-items:center;padding:5px 0 15px}.options{display:grid; gap:10px;}
+.option{padding:12px 14px; border-radius:12px; border:1px solid #cfddef; background:#f8fbff; display:flex; gap:10px; align-items:flex-start;}
+.option input{margin-top:3px;}
+.hidden{display:none !important;}
+.result-box{text-align:center;}
+.score{font-size:3rem; color:var(--navy); font-weight:900; margin:.2em 0;}
+.note{font-size:.94rem; color:#50637b; line-height:1.5;}
+.table-wrap{overflow:auto; margin-top:16px;}
+table{width:100%; border-collapse:collapse; background:white; border-radius:16px; overflow:hidden;}
+th,td{border:1px solid #dbe7f5; padding:10px; text-align:left; font-size:.93rem;}
+th{background:#edf4fd; color:var(--navy);}
+.footer-note{font-size:.9rem; color:#567; margin-top:14px; text-align:center;}
+@media (max-width:680px){ .card{padding:16px} .question-card{padding:16px} button{width:100%;} }
+</style>
+</head>
+<body>
+<div class="container">
+  <section class="hero">
+    <img src="nitw_logo.png" alt="NIT Warangal logo">
+    <h1>Can You Pass This Road Safety Test?</h1>
+</section>
+
+  <section id="startScreen" class="card">
+    <h2 style="margin-top:0;color:var(--navy)">Participant Details</h2>
+    <div class="grid">
+      <div class="field"><label for="name">Name</label><input id="name" type="text" placeholder="Enter your name"></div>
+      <div class="field"><label for="age">Age</label><input id="age" type="number" min="10" max="100" placeholder="Enter age"></div>
+      <div class="field"><label for="gender">Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div>
+      <div class="field"><label for="experience">Driving experience</label><select id="experience"><option value="">Select</option><option>None</option><option>Less than 1 year</option><option>1–3 years</option><option>3–5 years</option><option>More than 5 years</option></select></div>
+    </div>
+    <div class="field" style="margin-top:16px;">
+      <label>Type of vehicles you usually drive / ride</label>
+      <div class="checkbox-group" id="vehicleGroup">
+        <label><input type="checkbox" value="Two-wheeler"> Two-wheeler</label>
+        <label><input type="checkbox" value="Three-wheeler"> Three-wheeler</label>
+        <label><input type="checkbox" value="Car / 4-wheeler"> Car / 4-wheeler</label>
+        <label><input type="checkbox" value="LMV / Van"> LMV / Van</label>
+        <label><input type="checkbox" value="Truck / Bus"> Truck / Bus</label>
+        <label><input type="checkbox" value="None"> None</label>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="startQuiz()">Start Quiz</button>
+    </div>
+    <p class="footer-note">Your answers will be saved in this browser on this device. This practice quiz is not an official RTO test.</p>
+  </section>
+
+  <section id="quizScreen" class="card hidden">
+    <div class="quiz-header">
+      <h2 style="margin:0;color:var(--navy)">Quiz Questions</h2>
+      <div class="progress" id="progressText"></div>
+    </div>
+    <div id="quizContainer"></div>
+    <div class="actions">
+      <button class="primary" onclick="submitQuiz()">Submit Quiz</button>
+      <button class="secondary" onclick="scrollToTop()">Back to Top</button>
+    </div>
+  </section>
+
+  <section id="resultScreen" class="card hidden">
+    <div class="result-box">
+      <h2 style="margin-top:0;color:var(--navy)">Quiz Result</h2>
+      <div class="score" id="scoreText">0 / 30</div>
+      <p id="resultSummary"></p>
+      <div class="actions">
+        <button class="primary" onclick="restartQuiz()">Try Again</button>
+        <button class="secondary" onclick="toggleReview()">Show Answer Review</button>
+      </div>
+      <p class="note">Thank you for participating in road safety awareness.</p>
+    </div>
+    <div id="reviewBox" class="hidden"></div>
+  </section>
+
+</div>
+
+<script>
+const questionBank = [{"q": "In India, vehicles are normally driven on which side of the road?", "options": ["Left side", "Right side", "Centre of the road", "Either side when traffic is light"], "answer": "Left side"}, {"q": "What should you do when a traffic signal turns red?", "options": ["Proceed if no vehicle is approaching", "Stop before the stop line, unless directed otherwise by an authorised person", "Stop on the pedestrian crossing", "Sound the horn and proceed carefully"], "answer": "Stop before the stop line, unless directed otherwise by an authorised person"}, {"q": "What is the general minimum age to apply for a learner's licence for a private motor vehicle with an engine capacity above 50 cc?", "options": ["16 years", "17 years", "18 years", "21 years"], "answer": "18 years"}, {"q": "What does this traffic sign indicate?", "options": ["No entry for vehicles from this direction", "No parking on either side of the road", "Give way to traffic on the main road", "Maximum speed 50 km/h"], "answer": "No entry for vehicles from this direction", "sign": "no-entry"}, {"q": "Which statement about motorcycle helmets is correct under Indian law, subject to applicable exemptions?", "options": ["A helmet should meet applicable standards and be properly fastened", "Only the rider needs a helmet; the pillion never does", "A helmet is needed only on highways", "Carrying a helmet is sufficient; it need not be worn"], "answer": "A helmet should meet applicable standards and be properly fastened"}, {"q": "Before changing lanes, what is the safest sequence?", "options": ["Signal and move immediately", "Check mirrors and blind spot, signal, then move only when safe", "Sound the horn and change lanes", "Brake sharply before checking traffic"], "answer": "Check mirrors and blind spot, signal, then move only when safe"}, {"q": "What should you do when approaching a school-zone warning sign?", "options": ["Maintain speed until children step onto the road", "Reduce speed, watch for children and be ready to stop", "Overtake vehicles slowing near the school", "Use the horn continuously and continue"], "answer": "Reduce speed, watch for children and be ready to stop"}, {"q": "At an uncontrolled intersection, two vehicles arrive at approximately the same time. In general, which vehicle has priority under the applicable Indian driving rules?", "options": ["The vehicle approaching from the left in every case", "The vehicle approaching from the right, subject to signs and specific priority rules", "The larger vehicle regardless of direction", "The vehicle travelling faster"], "answer": "The vehicle approaching from the right, subject to signs and specific priority rules"}, {"q": "A continuous solid centre line is on your side of the road. What should you do?", "options": ["Cross it to overtake if the vehicle ahead is slow", "Do not cross it except where applicable law and markings permit", "Cross it whenever visibility is good", "Cross it after sounding the horn"], "answer": "Do not cross it except where applicable law and markings permit"}, {"q": "What does this warning sign mean?", "options": ["The road may be slippery; reduce speed and avoid sudden manoeuvres", "Vehicles must stop and inspect the road", "The road is closed to all traffic", "Overtaking is compulsory"], "answer": "The road may be slippery; reduce speed and avoid sudden manoeuvres", "sign": "slippery"}, {"q": "Pedestrians are waiting at a zebra crossing. What is the safest action?", "options": ["Continue unless a pedestrian has already stepped in front of you", "Slow down and stop when necessary to let them cross safely", "Sound the horn so pedestrians wait", "Stop only if a traffic officer is present"], "answer": "Slow down and stop when necessary to let them cross safely"}, {"q": "An ambulance on emergency duty approaches with its warning signals operating. What should you do?", "options": ["Accelerate to stay ahead of it", "Give way safely as soon as practicable without creating another hazard", "Stop immediately in the middle of the junction", "Follow closely behind it"], "answer": "Give way safely as soon as practicable without creating another hazard"}, {"q": "What does this circular sign displaying '50' generally mean?", "options": ["Maximum permitted speed is 50 km/h, subject to other restrictions and conditions", "Recommended minimum speed is 50 km/h", "Drive at exactly 50 km/h in all conditions", "A destination is 50 km away"], "answer": "Maximum permitted speed is 50 km/h, subject to other restrictions and conditions", "sign": "speed-50"}, {"q": "In heavy rain, visibility and tyre grip are reduced. What should you do?", "options": ["Increase following distance, reduce speed and use lights appropriate to conditions", "Follow the vehicle ahead more closely", "Use high beam continuously, even if it dazzles others", "Brake sharply whenever water is visible"], "answer": "Increase following distance, reduce speed and use lights appropriate to conditions"}, {"q": "When entering a roundabout, what is the safest general approach?", "options": ["Enter at normal speed because entering traffic has priority", "Slow down and give way to traffic already circulating, following signs and markings", "Stop inside the roundabout to decide your exit", "Change lanes without checking because traffic moves one way"], "answer": "Slow down and give way to traffic already circulating, following signs and markings"}, {"q": "What does this sign indicate?", "options": ["Parking is restricted in the area indicated, subject to applicable exceptions", "Parking is permitted if hazard lights are on", "Stopping briefly is prohibited everywhere in the city", "The area is reserved for motorcycles"], "answer": "Parking is restricted in the area indicated, subject to applicable exceptions", "sign": "no-parking"}, {"q": "Why is using a hand-held mobile phone while driving dangerous?", "options": ["It can divert attention and delay hazard detection and reaction", "It affects fuel economy but not safety", "It is safe whenever the vehicle is moving slowly", "It improves awareness because the driver checks the screen frequently"], "answer": "It can divert attention and delay hazard detection and reaction"}, {"q": "A learner's licence holder drives a car on a public road. Which statement is generally correct?", "options": ["The learner may drive alone after sufficient practice", "The learner must comply with licence conditions, including required supervision and 'L' display", "A learner may drive any vehicle class if an adult is present", "Learner conditions apply only on national highways"], "answer": "The learner must comply with licence conditions, including required supervision and 'L' display"}, {"q": "What is the correct response to this STOP sign at a junction?", "options": ["Slow down and continue if the junction appears empty", "Stop at the stop line or appropriate position, check traffic, and proceed only when safe", "Stop only when turning right", "Give way without stopping if no vehicle is visible"], "answer": "Stop at the stop line or appropriate position, check traffic, and proceed only when safe", "sign": "stop"}, {"q": "What does this GIVE WAY sign require?", "options": ["Yield to traffic with priority and stop if necessary", "Always proceed first when travelling straight", "Stop for a fixed period even when the road is clear", "Give way only to larger vehicles"], "answer": "Yield to traffic with priority and stop if necessary", "sign": "give-way"}, {"q": "At night on an undivided road, an oncoming vehicle approaches while your high beam is on. What should you do?", "options": ["Keep high beam on so the other driver sees you", "Dip to low beam in good time and maintain safe speed and lane position", "Switch off all lights until it passes", "Look directly at the oncoming headlights"], "answer": "Dip to low beam in good time and maintain safe speed and lane position"}, {"q": "You are following a heavy vehicle and cannot see the road ahead clearly. When should you overtake?", "options": ["Immediately, after sounding the horn", "Only when you have a clear view, sufficient distance and legal permission to complete the manoeuvre safely", "By using the shoulder if the opposing lane is not visible", "When you are close enough to see around the vehicle"], "answer": "Only when you have a clear view, sufficient distance and legal permission to complete the manoeuvre safely"}, {"q": "Warning signals are active at an ungated railway crossing. What should you do?", "options": ["Cross quickly if you cannot see a train", "Stop before the crossing and proceed only when signals permit and it is safe", "Follow the vehicle ahead without checking", "Stop on the tracks to look both ways"], "answer": "Stop before the crossing and proceed only when signals permit and it is safe"}, {"q": "Your vehicle begins to aquaplane on a wet road. What is the safest response?", "options": ["Brake hard and steer sharply", "Ease off the accelerator, keep steering smooth and avoid sudden braking until grip returns", "Accelerate firmly to cut through the water", "Apply the parking brake gradually"], "answer": "Ease off the accelerator, keep steering smooth and avoid sudden braking until grip returns"}, {"q": "A queue beyond a junction means there is no space for your vehicle to clear the intersection, although the signal is green. What should you do?", "options": ["Enter because green always means the junction is clear", "Wait before the junction until there is space to clear it without blocking cross traffic", "Stop on the pedestrian crossing", "Use the opposing lane to bypass the queue"], "answer": "Wait before the junction until there is space to clear it without blocking cross traffic"}, {"q": "What does this warning sign indicate?", "options": ["A narrow bridge is ahead; slow down and follow priority signs or traffic control", "The bridge has no load restrictions", "Overtaking is required before the bridge", "The road ends immediately at the bridge"], "answer": "A narrow bridge is ahead; slow down and follow priority signs or traffic control", "sign": "narrow-bridge"}, {"q": "You arrive first at a crash scene where someone is injured. What is the most appropriate response?", "options": ["Leave if the injured person appears conscious", "Arrange prompt medical assistance and fulfil applicable legal duties to report and cooperate", "Move every injured person immediately regardless of possible injuries or danger", "Wait until fault has been determined before calling for help"], "answer": "Arrange prompt medical assistance and fulfil applicable legal duties to report and cooperate"}, {"q": "When descending a long, steep gradient, which technique helps maintain control?", "options": ["Select neutral and coast", "Use an appropriate lower gear and controlled speed; avoid continuous heavy braking", "Keep the clutch depressed throughout", "Switch off the engine and rely on the brakes"], "answer": "Use an appropriate lower gear and controlled speed; avoid continuous heavy braking"}, {"q": "A centre line is solid on your side and broken on the opposite side. What does this generally mean?", "options": ["You may cross because the opposite side is broken", "You must not cross the solid line on your side; the broken-line side may cross only when safe and permitted", "Both directions may cross whenever visibility is good", "The marking applies only to parking"], "answer": "You must not cross the solid line on your side; the broken-line side may cross only when safe and permitted"}, {"q": "A driver has consumed alcohol but feels normal. Which statement is correct?", "options": ["Feeling normal proves that driving ability is unaffected", "Alcohol can impair judgement and reaction time; do not drive after consuming alcohol", "Coffee reliably removes alcohol impairment", "Driving slowly makes driving after alcohol safe and lawful"], "answer": "Alcohol can impair judgement and reaction time; do not drive after consuming alcohol"}, {"q": "What does the STOP road sign require?", "options": ["Come to a complete stop", "Slow down without stopping", "Use your horn and continue", "Give way only to trucks"], "answer": "Come to a complete stop", "sign": "stop"}, {"q": "What does the NO ENTRY road sign mean?", "options": ["No entry for vehicles", "No stopping at any time", "Parking prohibited", "Pedestrian area only"], "answer": "No entry for vehicles", "sign": "no-entry"}, {"q": "What does this 40 sign mean?", "options": ["Maximum speed 40 km/h", "Minimum speed 40 km/h", "Road distance 40 km", "Only 40 vehicles allowed"], "answer": "Maximum speed 40 km/h", "sign": "speed-40"}, {"q": "What does this red-slash P sign mean?", "options": ["No parking", "Parking allowed", "Parking for cars only", "Taxi stand"], "answer": "No parking", "sign": "no-parking"}, {"q": "What should you do at this GIVE WAY sign?", "options": ["Yield to traffic with priority", "Drive straight without slowing", "Stop for exactly 10 seconds", "Sound the horn before entering"], "answer": "Yield to traffic with priority", "sign": "give-way"}, {"q": "What does this traffic sign prohibit?", "options": ["Turning left", "Going straight", "Turning right", "Overtaking"], "answer": "Turning left", "sign": "no-left"}, {"q": "At a zebra crossing, pedestrians are already crossing. What should you do?", "options": ["Stop and let them cross", "Sound your horn and drive through", "Increase speed to pass first", "Stop only for a traffic officer"], "answer": "Stop and let them cross"}, {"q": "Before a car journey, what should occupants do?", "options": ["Fasten seat belts", "Turn on hazard lights", "Open all windows", "Switch on high beams"], "answer": "Fasten seat belts"}, {"q": "What is the correct helmet practice on a motorcycle?", "options": ["Both rider and pillion wear fastened helmets", "Only the rider wears a helmet", "Helmets are optional in city traffic", "A helmet is required only at night"], "answer": "Both rider and pillion wear fastened helmets"}, {"q": "You receive an urgent message while driving. What is safest?", "options": ["Pull over safely before using the phone", "Read it quickly at a red light", "Use the phone if driving slowly", "Ask the passenger to take the wheel"], "answer": "Pull over safely before using the phone"}, {"q": "What should you do at an uncontrolled junction with a blocked view?", "options": ["Slow down until you can see it is safe", "Accelerate to cross quickly", "Keep to the opposite lane", "Sound the horn and proceed without looking"], "answer": "Slow down until you can see it is safe"}, {"q": "A truck is turning left. Where should a scooter rider avoid riding?", "options": ["In the narrow gap along the truck's left side", "Well behind the truck", "At a safe distance from the junction", "Where the truck driver can see clearly"], "answer": "In the narrow gap along the truck's left side"}, {"q": "Why should you avoid cutting closely in front of a heavy truck?", "options": ["Its driver needs more distance to stop", "It can always stop immediately", "It is safer than staying behind", "Trucks have no front blind spots"], "answer": "Its driver needs more distance to stop"}, {"q": "A bus is stopped and passengers may step out. What is safest?", "options": ["Slow down and watch for pedestrians", "Overtake fast before people cross", "Sound the horn continuously", "Drive close to the bus"], "answer": "Slow down and watch for pedestrians"}, {"q": "What should you do when a traffic signal turns yellow?", "options": ["Prepare to stop if safe to do so", "Always accelerate through the junction", "Reverse to the previous junction", "Ignore it if there is no traffic"], "answer": "Prepare to stop if safe to do so"}];
+let renderedQuestions = [];
+let participant = null;
+const STORAGE_KEY = 'nitw_rsf_quiz_responses_v1';
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function getParticipantData() {
+  const vehicles = [...document.querySelectorAll('#vehicleGroup input:checked')].map(cb => cb.value);
+  return { name: document.getElementById('name').value.trim(), age: document.getElementById('age').value.trim(), gender: document.getElementById('gender').value, experience: document.getElementById('experience').value, vehicleTypes: vehicles.join(', ') };
+}
+function startQuiz() {
+  participant = getParticipantData();
+  if (!participant.age || !participant.gender || !participant.experience) { alert('Please fill Age, Gender and Driving Experience before starting the quiz.'); return; }
+  const signQs=shuffle(questionBank.filter(q=>q.sign)).slice(0,3);
+  const otherQs=shuffle(questionBank.filter(q=>!q.sign)).slice(0,7);
+  renderedQuestions=shuffle([...signQs,...otherQs]).map((q,idx)=>({...q,order:idx+1,optionsShuffled:shuffle(q.options)}));
+  renderQuiz();
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function signMarkup(id) {
+ if (!id) return '';
+ const c = {
+ 'stop':'<polygon points="44,7 76,7 93,24 93,56 76,73 44,73 27,56 27,24" fill="#df2533" stroke="white" stroke-width="3"/><text x="60" y="49" fill="white" text-anchor="middle" font-size="20" font-weight="900">STOP</text>',
+ 'no-entry':'<circle cx="60" cy="40" r="34" fill="#df2634"/><rect x="38" y="34" width="44" height="12" rx="2" fill="white"/>',
+ 'speed-40':'<circle cx="60" cy="40" r="33" fill="white" stroke="#df2634" stroke-width="10"/><text x="60" y="54" fill="#141414" text-anchor="middle" font-size="37" font-weight="800">40</text>',
+ 'speed-50':'<circle cx="60" cy="40" r="33" fill="white" stroke="#df2634" stroke-width="10"/><text x="60" y="54" fill="#141414" text-anchor="middle" font-size="37" font-weight="800">50</text>',
+ 'no-parking':'<circle cx="60" cy="40" r="33" fill="white" stroke="#df2634" stroke-width="9"/><text x="60" y="57" fill="#141414" text-anchor="middle" font-size="51" font-weight="800">P</text><path d="M38 17 L82 63" stroke="#df2634" stroke-width="8"/>',
+ 'give-way':'<polygon points="60,77 20,10 100,10" fill="white" stroke="#df2634" stroke-width="9" stroke-linejoin="round"/>',
+ 'no-left':'<circle cx="60" cy="40" r="33" fill="white" stroke="#df2634" stroke-width="9"/><path d="M82 60 L82 42 Q82 29 66 29 L40 29 M40 29 L52 18 M40 29 L52 40" fill="none" stroke="#151515" stroke-width="7" stroke-linejoin="round"/><path d="M38 15 L82 65" stroke="#df2634" stroke-width="8"/>',
+ 'slippery':'<polygon points="60,5 107,78 13,78" fill="#fff" stroke="#df2634" stroke-width="8" stroke-linejoin="round"/><path d="M44 46 q10 -15 18 0 q10 15 17 -1" stroke="#151515" fill="none" stroke-width="4"/><path d="M37 62q10 -13 17 0M67 62q10 -13 18 0" stroke="#151515" fill="none" stroke-width="3"/>',
+ 'narrow-bridge':'<polygon points="60,5 107,78 13,78" fill="#fff" stroke="#df2634" stroke-width="8" stroke-linejoin="round"/><path d="M42 34v32 M78 34v32 M42 44h36 M42 57h36" stroke="#151515" fill="none" stroke-width="5"/>'
+ };
+ return c[id] ? '<div class="sign-visual"><svg width="136" height="96" viewBox="0 0 120 86" aria-label="Traffic sign illustration" role="img">'+c[id]+'</svg></div>' : '';
+}
+
+function renderQuiz() {
+  const el = document.getElementById('quizContainer');
+  document.getElementById('progressText').textContent = `${renderedQuestions.length} questions`;
+  el.innerHTML = renderedQuestions.map((q, idx) => `
+    <div class="question-card" id="card_${idx}">
+      <h3>${idx+1}. ${escapeHtml(q.q)}</h3>
+      ${signMarkup(q.sign)}
+      <div class="options">
+        ${q.optionsShuffled.map(opt => `
+          <label class="option"><input type="radio" name="q${idx}" value="${escapeHtml(opt)}"> <span>${escapeHtml(opt)}</span></label>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+function submitQuiz() {
+  let score = 0;
+  const answers = [];
+  renderedQuestions.forEach((q, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    const userAnswer = selected ? selected.value : '';
+    const isCorrect = userAnswer === q.answer;
+    if (isCorrect) score++;
+    answers.push({question:q.q, correctAnswer:q.answer, userAnswer, isCorrect});
+  });
+  saveResponse({ timestamp:new Date().toLocaleString(), ...participant, score, total:renderedQuestions.length, percentage:Math.round((score/renderedQuestions.length)*100), answers });
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('scoreText').textContent = `${score} / ${renderedQuestions.length}`;
+  document.getElementById('resultSummary').textContent = `${participant.name || 'Participant'}, your score is ${Math.round((score / renderedQuestions.length) * 100)}%.`;
+  buildReview(answers); window.scrollTo({top:0, behavior:'smooth'});
+}
+function buildReview(answers) {
+  const review = document.getElementById('reviewBox');
+  review.innerHTML = '<h3 style="color:var(--navy)">Answer Review</h3>' + answers.map((a, i) => `
+    <div class="question-card"><h3>${i+1}. ${escapeHtml(a.question)}</h3><p><b>Your answer:</b> <span style="color:${a.isCorrect ? '#159947' : '#c53030'}">${escapeHtml(a.userAnswer || 'Not answered')}</span></p><p><b>Correct answer:</b> <span style="color:#159947">${escapeHtml(a.correctAnswer)}</span></p></div>
+  `).join('');
+  review.classList.add('hidden');
+}
+function toggleReview() { document.getElementById('reviewBox').classList.toggle('hidden'); }
+function escapeHtml(str) { return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'", '&#39;'); }
+function getStoredResponses() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
+function saveResponse(record) { const data=getStoredResponses(); data.push(record); localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function restartQuiz() { document.getElementById('resultScreen').classList.add('hidden'); document.getElementById('startScreen').classList.remove('hidden'); document.getElementById('quizScreen').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
+function scrollToTop() { window.scrollTo({top:0, behavior:'smooth'}); }
+</script>
+</body>
+</html>
