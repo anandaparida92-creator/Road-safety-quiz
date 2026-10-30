@@ -95,13 +95,13 @@ th{background:#edf4fd; color:var(--navy);}
   <section id="resultScreen" class="card hidden">
     <div class="result-box">
       <h2 style="margin-top:0;color:var(--navy)">Quiz Result</h2>
-      <div class="score" id="scoreText">0 / 30</div>
+      <div class="score" id="scoreText">0 / 10</div>
       <p id="resultSummary"></p>
       <div class="actions">
         <button class="primary" onclick="restartQuiz()">Try Again</button>
         <button class="secondary" onclick="toggleReview()">Show Answer Review</button>
       </div>
-      <p class="note">Thank you for participating in road safety awareness.</p>
+      <p class="note">Thank you for participating in road safety awareness.</p><p class="note" id="saveStatus" role="status" aria-live="polite"></p>
     </div>
     <div id="reviewBox" class="hidden"></div>
   </section>
@@ -113,6 +113,9 @@ const questionBank = [{"q": "In India, vehicles are normally driven on which sid
 let renderedQuestions = [];
 let participant = null;
 const STORAGE_KEY = 'nitw_rsf_quiz_responses_v1';
+// PASTE YOUR DEPLOYED APPS SCRIPT /exec URL BELOW (not the /dev or spreadsheet URL).
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycT1ggScuWAF1wHQl-vv0kx_OU6xedW734aDO_d1Ar5NZRtCxoTv5BmUz7-v8Rwnxcew/exec';
+
 
 function shuffle(arr) {
   const a = [...arr];
@@ -180,7 +183,9 @@ function submitQuiz() {
     if (isCorrect) score++;
     answers.push({question:q.q, correctAnswer:q.answer, userAnswer, isCorrect});
   });
-  saveResponse({ timestamp:new Date().toLocaleString(), ...participant, score, total:renderedQuestions.length, percentage:Math.round((score/renderedQuestions.length)*100), answers });
+  const record = { timestamp:new Date().toISOString(), ...participant, score, total:renderedQuestions.length, percentage:Math.round((score/renderedQuestions.length)*100), answers };
+  saveResponse(record); // Local backup on this device; never displayed to participants.
+  sendToGoogleSheet(record);
   document.getElementById('quizScreen').classList.add('hidden');
   document.getElementById('resultScreen').classList.remove('hidden');
   document.getElementById('scoreText').textContent = `${score} / ${renderedQuestions.length}`;
@@ -196,6 +201,33 @@ function buildReview(answers) {
 }
 function toggleReview() { document.getElementById('reviewBox').classList.toggle('hidden'); }
 function escapeHtml(str) { return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'", '&#39;'); }
+
+async function sendToGoogleSheet(record) {
+  const status = document.getElementById('saveStatus');
+  if (!GOOGLE_SCRIPT_URL.startsWith('https://script.google.com/macros/s/') || !GOOGLE_SCRIPT_URL.endsWith('/exec')) {
+    status.textContent = 'Your score is shown above. Online collection is not configured yet; a local copy was saved on this device.';
+    return;
+  }
+  if (!navigator.onLine) {
+    status.textContent = 'You appear offline. Your answers were saved on this device, but not uploaded to the organizer.';
+    return;
+  }
+  status.textContent = 'Sending your entry to the organizer…';
+  try {
+    // Apps Script web apps generally cannot return readable CORS responses to GitHub Pages.
+    // mode: no-cors sends the POST, but cannot verify that Sheets accepted the data.
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({event: 'NITW_Technozion_2026', record})
+    });
+    status.textContent = 'Your quiz is complete. Submission was sent; final receipt cannot be verified in this browser.';
+  } catch(err) {
+    status.textContent = 'Online submission could not be sent. Your answers are saved only on this device. Please inform the stall organizer.';
+  }
+}
+
 function getStoredResponses() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
 function saveResponse(record) { const data=getStoredResponses(); data.push(record); localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 function restartQuiz() { document.getElementById('resultScreen').classList.add('hidden'); document.getElementById('startScreen').classList.remove('hidden'); document.getElementById('quizScreen').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
